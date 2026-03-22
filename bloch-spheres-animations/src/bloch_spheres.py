@@ -45,7 +45,7 @@ def complex_to_latex(z, tol=1e-3):
     if r == 0:
         return f"{i:.2f}i"
     sign = "+" if i > 0 else "-"
-    return f"({r:.2f} {sign} {abs(i):.2f}i)"
+    return f"{r:.2f} {sign} {abs(i):.2f}i"
 
 # ------------------------------------------------------------
 # Main animation function
@@ -161,7 +161,7 @@ def animate_gate_4_quadrants(
         terms = [f"{α_str}\\,|0\\rangle"]
         sign = " + " if not β_str.startswith("-") else " "
         terms.append(f"{sign}{β_str}\\,|1\\rangle")
-        state_line = rf"$|\psi\rangle = {' '.join(terms)}$"
+        state_line = r"$\psi\rangle = \alpha|0\rangle + \beta|1\rangle$"
         coeff_line = rf"$\alpha = {α_str}, \quad \beta = {β_str}$"
         dirac_text.set_text(state_line + "\n" + coeff_line)
         return []

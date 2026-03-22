@@ -68,7 +68,7 @@ def make_videos():
                 gate,
                 title,
                 # save_path=f"videos/bloch_spheres/{i:02d}_{title.replace(' ', '_')}.mp4",
-                save_path=f"videos/bloch_spheres/{i:02d}.mp4",
+                save_path=f"../videos/bloch_spheres/{i:02d}.mp4",
                 phase_gate=phase
             )
         except Exception as e:
