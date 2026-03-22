@@ -3,3 +3,4 @@ qutip
 matplotlib
 ffmpeg
 latex
+python-dotenv

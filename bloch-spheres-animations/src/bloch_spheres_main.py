@@ -1,11 +1,27 @@
 import numpy as np
+import os
+from pathlib import Path
 from qutip import basis, Qobj
 from scipy.linalg import expm, logm
+from dotenv import load_dotenv
 
 from bloch_spheres import rx, ry, rz, hadamard, animate_gate_4_quadrants
 
 
-def make_videos():
+ROOT_DIR = Path(__file__).resolve().parents[1]
+load_dotenv(ROOT_DIR / ".env")
+
+
+def get_required_env(var_name: str) -> str:
+    value = os.getenv(var_name)
+    if value is None or not value.strip():
+        raise SystemExit(
+            f"Missing required environment variable '{var_name}' in {ROOT_DIR / '.env'}"
+        )
+    return value
+
+
+def make_videos(output_videos_dir: str | Path):
     # Precompute for Hadamard interpolation
     H = Qobj([[1,1],[1,-1]]) / np.sqrt(2)
     logH = logm(H.full())
@@ -54,6 +70,8 @@ def make_videos():
          True),
     ]
 
+    output_videos_dir = Path(output_videos_dir)
+
     for i, (psi0, gate, title, phase) in enumerate(cases):
         try:
             final_op = gate(1.0)
@@ -68,7 +86,7 @@ def make_videos():
                 gate,
                 title,
                 # save_path=f"videos/bloch_spheres/{i:02d}_{title.replace(' ', '_')}.mp4",
-                save_path=f"../videos/bloch_spheres/{i:02d}.mp4",
+                save_path=str(output_videos_dir / f"{i:02d}.mp4"),
                 phase_gate=phase
             )
         except Exception as e:
@@ -79,7 +97,12 @@ def make_videos():
 if __name__ == "__main__":
     # verify that ffmpeg is visible
     import matplotlib as mpl
-    mpl.rcParams['animation.ffmpeg_path'] = "/opt/homebrew/bin/ffmpeg"
-    print(mpl.animation.writers.list())
+    ffmpeg_path = get_required_env("BLOCH_FFMPEG_PATH")
+    output_videos_dir = get_required_env("BLOCH_OUTPUT_VIDEOS_PATH")
 
-    make_videos()
+    mpl.rcParams['animation.ffmpeg_path'] = ffmpeg_path
+    print(mpl.animation.writers.list())
+    print(f"Using ffmpeg path: {ffmpeg_path}")
+    print(f"Using output path: {output_videos_dir}")
+
+    make_videos(output_videos_dir)
